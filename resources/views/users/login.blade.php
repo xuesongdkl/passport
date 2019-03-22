@@ -3,6 +3,7 @@
     <h2 class="form-signin-heading" style="margin-left: 100px;color:red;">请登录</h2>
     <form class="form-horizontal" action="/userlogin" method="post" style="margin-top: 30px">
         {{csrf_field()}}
+        <input type="hidden" value="{{$redirect}}" name="redirect">
         <div class="form-group" >
             <label for="inputEmail3" class="col-sm-2 control-label">账号</label>
             <div class="col-sm-10">

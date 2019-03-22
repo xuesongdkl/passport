@@ -51,26 +51,40 @@ class UserController extends Controller
 
     //登录
     public function login(){
-        return view('users.login');
+        $redirect=$_GET['redirect']?? env('SHOP_URL');
+        $data=[
+            'redirect'  =>$redirect
+        ];
+        return view('users.login',$data);
     }
 
     public function dologin(Request $request){
         $name=$request->input('u_name');
         $pwd=$request->input('u_pwd');
+        $aaa=$request->input('redirect')?? env('SHOP_URL');
+//        echo $aaa;die;
         $res=UserModel::where(['name'=>$name])->first();
         if($res){
             if(password_verify($pwd,$res->password)){
 
                 $token = substr(md5(time().mt_rand(1,99999)),10,10);
-                setcookie('name',$res->name,time()+86400,'/','',false,true);
-                setcookie('uid',$res->uid,time()+86400,'/','',false,true);
-                setcookie('token',$token,time()+86400,'/','',false,true);
-                $redis_key_web_token='str:u:token:web:'.$res->uid;
-                Redis::set($redis_key_web_token,$token);
-                Redis::expire($redis_key_web_token,86400);       //设置过期时间
+                setcookie('name',$res->name,time()+86400,'/','vm.lening.com',false,true);
+                setcookie('uid',$res->uid,time()+86400,'/','vm.lening.com',false,true);
+                setcookie('token',$token,time()+86400,'/','vm.lening.com',false,true);
 //                $request->session()->put('uid',$res->uid);
-//                $request->session()->put('p_token',$token);
-                header('refresh:1;url=/');
+//                $request->session()->put('token',$token);
+
+//                $redis_key_web_token='str:u:token:web:'.$res->uid;
+//                Redis::set($redis_key_web_token,$token);
+//                Redis::expire($redis_key_web_token,86400);       //设置过期时间
+
+                $redis_key_web_token='str:u:token:'.$res->uid;
+                Redis::del($redis_key_web_token);
+                Redis::hSet($redis_key_web_token,'web',$token);
+
+
+//                echo $redis_key_web_token;die;
+                header("refresh:1;$aaa");
                 echo "登录成功";die;
             }else{
                 echo "账号或者密码错误";die;
@@ -120,9 +134,9 @@ class UserController extends Controller
         if($res){
             if(password_verify($u_pwd,$res->password)){
                 $token = substr(md5(time().mt_rand(1,99999)),10,10);
-                $app_login_token='app:login:token:'.$res->uid;
-                Redis::set($app_login_token,$token);
-//                Redis::expire($app_login_token,86400);       //设置过期时间
+                $redis_key_web_token='str:u:token:'.$res->uid;
+                Redis::del($redis_key_web_token);
+                Redis::hSet($redis_key_web_token,'app',$token);        //设置过期时间
                 $response=[
                     'errno'  =>   0,
                     'msg'    =>   'ok',
