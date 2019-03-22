@@ -140,10 +140,6 @@ class UserController extends Controller
                 'msg'    =>   '用户不存在'
             ];
         }
-        $response=[
-            'errno' =>0,
-            'msg'   => 'ok'
-        ];
         return $response;
     }
 }
