@@ -110,29 +110,36 @@ class UserController extends Controller
     }
 
     //passport登录
-    public function paslogin(){
-        $data=$_POST['data'];
-        $data=json_decode($data);
+    public function paslogin(Request $request){
+        $u_name=$request->input('u_name');
+        $u_pwd=$request->input('u_pwd');
         $where=[
-            'name' => $data['u_name']
+            'name' => $u_name
         ];
         $res=UserModel::where($where)->find();
         if($res){
-            if(password_verify($data['u_pwd'],$res->password)){
+            if(password_verify($u_pwd,$res->password)){
                 $token = substr(md5(time().mt_rand(1,99999)),10,10);
-                setcookie('name',$res->name,time()+86400,'/','',false,true);
-                setcookie('uid',$res->uid,time()+86400,'/','',false,true);
-                setcookie('token',$token,time()+86400,'/','',false,true);
-                $redis_key_web_token='str:u:token:web:'.$res->uid;
-                Redis::set($redis_key_web_token,$token);
-                Redis::expire($redis_key_web_token,86400);       //设置过期时间
-                header('refresh:1;url=/');
-                echo "登录成功";die;
+                $app_login_token='app:login:token:'.$res->uid;
+                Redis::set($app_login_token,$token);
+//                Redis::expire($app_login_token,86400);       //设置过期时间
+                $response=[
+                    'errno'  =>   0,
+                    'msg'    =>   'ok',
+                    'token'  =>   $token
+                ];
             }else{
-                echo "账号或者密码错误";die;
+                $response=[
+                    'errno'  =>   40003,
+                    'msg'    =>   '账号或者密码错误'
+                ];
             }
         }else{
-            echo "用户不存在";die;
+            $response=[
+                'errno'  =>   40001,
+                'msg'    =>   '用户不存在'
+            ];
         }
+        return $response;
     }
 }
