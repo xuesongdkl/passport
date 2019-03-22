@@ -116,7 +116,7 @@ class UserController extends Controller
         $where=[
             'name' => $u_name
         ];
-        $res=UserModel::where($where)->find();
+        $res=UserModel::where($where)->first();
         if($res){
             if(password_verify($u_pwd,$res->password)){
                 $token = substr(md5(time().mt_rand(1,99999)),10,10);
