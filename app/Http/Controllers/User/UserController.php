@@ -109,4 +109,30 @@ class UserController extends Controller
         header('Refresh:1;url=/userlogin');
     }
 
+    //passport登录
+    public function paslogin(){
+        $data=$_POST['data'];
+        $data=json_decode($data);
+        $where=[
+            'name' => $data['u_name']
+        ];
+        $res=UserModel::where($where)->find();
+        if($res){
+            if(password_verify($data['u_pwd'],$res->password)){
+                $token = substr(md5(time().mt_rand(1,99999)),10,10);
+                setcookie('name',$res->name,time()+86400,'/','',false,true);
+                setcookie('uid',$res->uid,time()+86400,'/','',false,true);
+                setcookie('token',$token,time()+86400,'/','',false,true);
+                $redis_key_web_token='str:u:token:web:'.$res->uid;
+                Redis::set($redis_key_web_token,$token);
+                Redis::expire($redis_key_web_token,86400);       //设置过期时间
+                header('refresh:1;url=/');
+                echo "登录成功";die;
+            }else{
+                echo "账号或者密码错误";die;
+            }
+        }else{
+            echo "用户不存在";die;
+        }
+    }
 }
