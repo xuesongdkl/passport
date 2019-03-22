@@ -29,5 +29,5 @@ Route::get('/center','User\UserController@center');
 Route::get('/quit','User\UserController@quit');
 
 //passport登录
-Route::get('/user/login','User\UserController@paslogin');
+Route::post('/user/login','User\UserController@paslogin');
 
