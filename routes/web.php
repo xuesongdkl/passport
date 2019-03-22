@@ -28,6 +28,6 @@ Route::get('/center','User\UserController@center');
 //退出
 Route::get('/quit','User\UserController@quit');
 
-//passport登录
+//app登录
 Route::post('/user/login','User\UserController@paslogin');
 
