@@ -68,9 +68,9 @@ class UserController extends Controller
             if(password_verify($pwd,$res->password)){
 
                 $token = substr(md5(time().mt_rand(1,99999)),10,10);
-                setcookie('name',$res->name,time()+86400,'/','lening.com',false,true);
-                setcookie('uid',$res->uid,time()+86400,'/','lening.com',false,true);
-                setcookie('token',$token,time()+86400,'/','lening.com',false,true);
+                setcookie('name',$res->name,time()+86400,'/','xsdkl.52self.cn',false,true);
+                setcookie('uid',$res->uid,time()+86400,'/','xsdkl.52self.cn',false,true);
+                setcookie('token',$token,time()+86400,'/','xsdkl.52self.cn',false,true);
 //                $request->session()->put('uid',$res->uid);
 //                $request->session()->put('token',$token);
 
@@ -116,9 +116,9 @@ class UserController extends Controller
 
     //退出
     public function quit(){
-        setcookie('uid',null);
-        setcookie('token',null);
-        setcookie('name',null);
+        setcookie('uid',null,time()-1,'/','xsdkl.52self.cn',false,true);
+        setcookie('token',null,time()-1,'/','xsdkl.52self.cn',false,true);
+        setcookie('name',null,time()-1,'/','xsdkl.52self.cn',false,true);
         echo "请重新登录,正在跳转";
         header('Refresh:1;url=/userlogin');
     }
