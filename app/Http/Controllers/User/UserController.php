@@ -140,7 +140,9 @@ class UserController extends Controller
                 $response=[
                     'errno'  =>   0,
                     'msg'    =>   'ok',
-                    'token'  =>   $token
+                    'token'  =>   $token,
+                    'uid'    =>   $res->uid,
+                    'user'   =>   $res->name
                 ];
             }else{
                 $response=[
