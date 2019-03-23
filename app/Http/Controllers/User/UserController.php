@@ -74,13 +74,13 @@ class UserController extends Controller
 //                $request->session()->put('uid',$res->uid);
 //                $request->session()->put('token',$token);
 
-                $redis_key_web_token='str:u:token:web:'.$res->uid;
-                Redis::set($redis_key_web_token,$token);
-                Redis::expire($redis_key_web_token,86400);       //设置过期时间
+//                $redis_key_web_token='str:u:token:web:'.$res->uid;
+//                Redis::set($redis_key_web_token,$token);
+//                Redis::expire($redis_key_web_token,86400);       //设置过期时间
 
-//                $redis_key_web_token='str:u:token:'.$res->uid;
-//                Redis::del($redis_key_web_token);
-//                Redis::hSet($redis_key_web_token,'web',$token);
+                $redis_key_web_token='str:u:token:'.$res->uid;
+                Redis::del($redis_key_web_token);
+                Redis::hSet($redis_key_web_token,'web',$token);
 
 
 //                echo $redis_key_web_token;die;
