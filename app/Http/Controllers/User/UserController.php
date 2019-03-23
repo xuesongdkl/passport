@@ -39,7 +39,7 @@ class UserController extends Controller
         ];
         $uid=UserModel::insertGetId($data);
         if($uid){
-            setcookie('uid',$uid,time()+86400,'/','vm.lening.com',false,true);
+            setcookie('uid',$uid,time()+86400,'/','lening.com',false,true);
 //            $redis_key_web_token='str:u:token:web:'.$uid;
             header("refresh:2;url=/userlogin");
             echo "注册成功,正在跳转";
@@ -51,7 +51,7 @@ class UserController extends Controller
 
     //登录
     public function login(){
-        $redirect=$_GET['redirect']?? env('SHOP_URL');
+        $redirect=$_GET['redirect'] ?? env('SHOP_URL');
         $data=[
             'redirect'  =>$redirect
         ];
@@ -68,19 +68,19 @@ class UserController extends Controller
             if(password_verify($pwd,$res->password)){
 
                 $token = substr(md5(time().mt_rand(1,99999)),10,10);
-                setcookie('name',$res->name,time()+86400,'/','vm.lening.com',false,true);
-                setcookie('uid',$res->uid,time()+86400,'/','vm.lening.com',false,true);
-                setcookie('token',$token,time()+86400,'/','vm.lening.com',false,true);
+                setcookie('name',$res->name,time()+86400,'/','lening.com',false,true);
+                setcookie('uid',$res->uid,time()+86400,'/','lening.com',false,true);
+                setcookie('token',$token,time()+86400,'/','lening.com',false,true);
 //                $request->session()->put('uid',$res->uid);
 //                $request->session()->put('token',$token);
 
-//                $redis_key_web_token='str:u:token:web:'.$res->uid;
-//                Redis::set($redis_key_web_token,$token);
-//                Redis::expire($redis_key_web_token,86400);       //设置过期时间
+                $redis_key_web_token='str:u:token:web:'.$res->uid;
+                Redis::set($redis_key_web_token,$token);
+                Redis::expire($redis_key_web_token,86400);       //设置过期时间
 
-                $redis_key_web_token='str:u:token:'.$res->uid;
-                Redis::del($redis_key_web_token);
-                Redis::hSet($redis_key_web_token,'web',$token);
+//                $redis_key_web_token='str:u:token:'.$res->uid;
+//                Redis::del($redis_key_web_token);
+//                Redis::hSet($redis_key_web_token,'web',$token);
 
 
 //                echo $redis_key_web_token;die;
