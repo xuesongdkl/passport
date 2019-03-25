@@ -31,3 +31,5 @@ Route::get('/quit','User\UserController@quit');
 //app登录
 Route::post('/user/login','User\UserController@paslogin');
 
+Route::post('/user/register','User\UserController@pasregister');
+

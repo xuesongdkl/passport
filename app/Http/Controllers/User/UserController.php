@@ -158,4 +158,58 @@ class UserController extends Controller
         }
         return $response;
     }
+
+    //passport注册
+    public function pasregister(Request $request){
+        $u_name=$request->input('u_name');
+        $u_email=$request->input('u_email');
+        $u_age=$request->input('u_age');
+        $where=[
+            'name' => $u_name
+        ];
+        $userinfo=UserModel::where($where)->first();
+        if($userinfo) {
+            $response=[
+                'errno'  =>   40003,
+                'msg'    =>   '该用户已存在'
+            ];
+        }
+        $pwd1 = $request->input('u_pwd1');
+        $pwd2 = $request->input('u_pwd2');
+        if($pwd1 !== $pwd2){
+            $response=[
+                'errno'  =>   40003,
+                'msg'    =>    '确认密码需和密码一致'
+            ];
+        }
+        $pwd = password_hash($pwd1,PASSWORD_BCRYPT);
+        $data=[
+            'name'      =>      $u_name,
+            'password'  =>      $pwd,
+            'email'     =>      $request->input('u_email'),
+            'age'       =>      $request->input('u_age'),
+            'reg_time'  =>      time()
+        ];
+        $uid=UserModel::insertGetId($data);
+        if($uid){
+            setcookie('uid',$uid,time()+86400,'/','52self.cn',false,true);
+            $token = substr(md5(time().mt_rand(1,99999)),10,10);
+            $redis_key_web_token='str:u:token:'.$uid->uid;
+            Redis::del($redis_key_web_token);
+            Redis::hSet($redis_key_web_token,'app',$token);        //设置过期时间
+            $response=[
+                'errno'  =>   0,
+                'msg'    =>   'ok',
+                'token'  =>   $token,
+                'uid'    =>   $uid->uid,
+                'user'   =>   $uid->name
+            ];
+        }else{
+            $response=[
+                'errno'  =>   40001,
+                'msg'    =>   '用户不存在'
+            ];
+        }
+        return $response;
+    }
 }
